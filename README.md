@@ -45,10 +45,4 @@ For full setup and self-hosting instructions, see [SELFHOSTING.md](frontend/SELF
 
 ---
 
-## License
-
-MIT (or your preferred license)
-
----
-
 For issues or contributions, open a PR or issue on GitHub.
