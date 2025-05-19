@@ -239,36 +239,3 @@ rule resource_access {
     condition:
         any of them
 }
-
-// rule easyforme_malware {
-//     meta:
-//         severity = "Critical"
-//         description = "EasyForMe malware identifier - indicates presence of EasyForMe malware"
-//         category = "obfuscation"
-//     strings:
-//         $ = "Protected by Prestige Industries and George Droid Technology funded by Microsoft"
-//     condition:
-//         any of them
-// }
-
-// rule string_concat_constants {
-//     meta:
-//         severity = 2
-//         description = "String concatenation with constants - common in string obfuscation"
-//         category = "obfuscation"
-//     strings:
-//         $ = "makeConcatWithConstants"
-//     condition:
-//         any of them
-// }
-
-// rule string_concat_factory {
-//     meta:
-//         severity = 2
-//         description = "String concatenation factory - common in string obfuscation"
-//         category = "obfuscation"
-//     strings:
-//         $ = "StringConcatFactory"
-//     condition:
-//         any of them
-// } 
