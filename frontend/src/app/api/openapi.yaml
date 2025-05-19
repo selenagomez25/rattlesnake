@@ -1,0 +1,190 @@
+openapi: 3.0.0
+info:
+  title: Rattlesnake API
+  version: 1.0.0
+  description: Public API documentation for the Rattlesnake malware scanner.
+servers:
+  - url: /api/v1
+paths:
+  /files:
+    get:
+      summary: List scan jobs for the current user
+      description: Returns a list of scan jobs submitted by the user.
+      responses:
+        '200':
+          description: List of scan jobs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scans:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ScanJob'
+        '400':
+          description: Bad request (e.g., invalid input)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests (rate limit)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /files/upload:
+    post:
+      summary: Upload a .jar file for scanning
+      description: Upload a Minecraft mod (.jar) file to scan for malware.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Scan job created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scanId:
+                    type: string
+        '400':
+          description: Bad request (e.g., no file, wrong type, too large)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many uploads (rate limit)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /files/url:
+    post:
+      summary: Submit a URL to a .jar file for scanning
+      description: Submit a direct URL to a Minecraft mod (.jar) file to scan for malware.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+      responses:
+        '200':
+          description: Scan job created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scanId:
+                    type: string
+        '400':
+          description: Bad request (e.g., no URL, wrong type, too large)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many uploads (rate limit)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /jobs/{jobId}:
+    get:
+      summary: Get scan job by ID
+      description: Get the status and result of a scan job by its ID.
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Scan job details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanJob'
+        '400':
+          description: Bad request (e.g., missing or invalid jobId)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests (rate limit)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ScanJob:
+      type: object
+      properties:
+        scanId:
+          type: string
+        fileName:
+          type: string
+        status:
+          type: string
+          enum: [pending, queued, processing, done, error]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        result:
+          type: object
+          nullable: true
+        userId:
+          type: string
+          nullable: true
+        userEmail:
+          type: string
+          nullable: true
+        size:
+          type: integer
+          nullable: true
+        malwareStatus:
+          type: string
+          nullable: true
+        score:
+          type: number
+          nullable: true
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string 
